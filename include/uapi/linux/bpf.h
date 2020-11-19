@@ -3948,6 +3948,7 @@ union bpf_attr {
 	FN(task_storage_get),		\
 	FN(task_storage_delete),	\
 	FN(get_current_task_btf),	\
+	FN(user_override_return),	\
 	/* */
 
 /* integer value in 'imm' field of BPF_CALL instruction selects which helper

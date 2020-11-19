@@ -152,6 +152,23 @@ static const struct bpf_func_proto bpf_override_return_proto = {
 };
 #endif
 
+//#ifdef CONFIG_BPF_UPROBE_OVERRIDE
+BPF_CALL_2(bpf_user_override_return, struct pt_regs *, regs, unsigned long, rc)
+{
+	regs_set_return_value(regs, rc);
+	override_function_with_return(regs);
+	return 0;
+}
+
+const struct bpf_func_proto bpf_user_override_return_proto = {
+	.func		= bpf_user_override_return,
+	.gpl_only	= true,
+	.ret_type	= RET_INTEGER,
+	.arg1_type	= ARG_PTR_TO_CTX,
+	.arg2_type	= ARG_ANYTHING,
+};
+//#endif
+
 static __always_inline int
 bpf_probe_read_user_common(void *dst, u32 size, const void __user *unsafe_ptr)
 {
@@ -1373,6 +1390,10 @@ kprobe_prog_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
 	case BPF_FUNC_override_return:
 		return &bpf_override_return_proto;
 #endif
+//#ifdef CONFIG_BPF_UPROBE_OVERRIDE
+	case BPF_FUNC_user_override_return:
+		return &bpf_user_override_return_proto;
+//#endif
 	default:
 		return bpf_tracing_func_proto(func_id, prog);
 	}
